@@ -128,6 +128,14 @@ def normalize_mapping(df: pd.DataFrame) -> pd.DataFrame:
         .str.lower()
         .str.replace(" ", "_")
     )
+
+    #Deleting dublicates campaign_id–adset_id
+    before = len(df)
+    df = df.drop_duplicates(subset=["campaign_id", "adset_id"])
+    after = len(df)
+    if after < before:
+        print(f"[NORM] Mapping deduplicated: {before} → {after} rows")
+
     return df
 
 # BUILD FACT TABLE
@@ -222,7 +230,7 @@ def main():
 
     print(f"[SAVE] Fact rows: {len(fact)}, authors: {len(authors)}")
 
-    # Save to CSV
+# Save to CSV
     OUTPUT_DIR = Path("outputs")
     OUTPUT_DIR.mkdir(exist_ok=True)
 
@@ -231,7 +239,7 @@ def main():
 
     print("[SAVE] CSV files written to /outputs")
 
-    # Save to MySQL
+# Save to MySQL
     print("[SAVE] Writing tables to MySQL...")
     engine = create_engine(DB_URL)
 
